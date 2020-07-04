@@ -1,0 +1,13 @@
+#!/bin/bash
+
+getDiff(){
+	strt=$1
+	stp=$2
+
+	diff=$(( $(date -d "$stp" "+%s") - $(date -d "$strt" "+%s") ))
+	diffh=$(date -d@$diff -u +%H:%M:%s)
+
+	echo $diffh
+}
+
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+neo4jBin=$1
+startStop=$2
+
+if [[ $startStop = "start" ]]; then
+	(cd $neo4jBin && ./neo4j start)
+else
+	(cd $neo4jBin && ./neo4j stop)
+
+fi 
+#(cd neo4jBin && ./neo4j start)
+

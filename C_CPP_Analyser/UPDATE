@@ -1,0 +1,75 @@
+#!/bin/bash
+
+BLUE=`tput setaf 4`
+RED=`tput setaf 1`
+GREEN=`tput setaf 2`
+RESET=`tput sgr0`
+CYAN=`tput setaf 6`
+
+tag="${BLUE}[UPDATE]${RESET} "
+
+tmp_process=p2
+alive_check=ac
+hangT=50
+#hangT=0
+
+rm $alive_check
+rm $tmp_process
+
+doneId(){
+	id=$1
+	pid=$2
+	
+	sed -i "/${pid}(${id})/d" ./$alive_check
+}
+
+
+updateCur(){
+
+	echo 1 >> $tmp_process
+	pt=0
+	while read line;
+	do
+		pt=$(( pt + 1))
+	done < $tmp_process
+	
+	
+	curT=$(date +%s)
+
+	if [[ -f $alive_check ]]; then
+		sed -i "/${1}(${2})/d" ./$alive_check
+	fi
+
+	echo "${1}(${2});$curT" >> $alive_check	
+	
+	chk=$((pt%50))
+	#chk=$((pt%1))
+	
+	if [[ $chk -eq 0 ]]; then
+		while read line;
+		do
+			
+			pidd=($(echo $line | tr ";" "\n"))
+			last=${pidd[-1]}
+			pidd=${pidd[0]}
+
+			
+			diff=$((curT - $last))
+			
+			if [[ $diff -gt $hangT ]]; then
+				echo "$RED${pidd} Hang (since $diff seconds)!$RESET"
+			fi
+		
+		done < $alive_check
+	fi
+
+	
+
+	print=$(( pt % 20 ))
+	#print=$(( pt % 1 ))
+
+	if [[ $print == 0 ]]; then
+		echo "${tag}[${1}(${2})] Proccessed: ${pt}/${total}"
+	fi
+}
+
